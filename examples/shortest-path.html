@@ -1,0 +1,110 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Shortest Path with GeometricNet</title>
+    <!--link rel="stylesheet" href="http://openlayers.org/dev/theme/default/style.css" type="text/css" /-->
+    <!--link rel="stylesheet" href="style.css" type="text/css" /-->
+    <link rel="stylesheet" href="../theme/default/style.css" type="text/css" />
+	<style type="text/css"> 
+		#map {
+            width: 600px;
+            height: 400px;
+            border: 1px solid #ccc;
+        }
+    </style> 
+    <script src="../lib/GeometricNet.js"></script>
+    <script src="road-network-config.js"></script>	
+	<!--script type="text/javascript" src="C:\tmp\rep-olnet\json2.js"></script-->
+    <script type="text/javascript">
+        var map = null;
+        var myNetwork =null;
+
+        function init(){			
+            map = new OpenLayers.Map('map');
+			var ol_osm = new OpenLayers.Layer.OSM("Simple OSM Map");
+			map.addLayers([ol_osm]);
+			
+			//electricNetwork.fidUrl = "http://localhost/network-app/fid.php";
+			myNetwork = new GeometricNet.Network("testNet",map,network);
+			map.addControl(new OpenLayers.Control.LayerSwitcher());
+			
+			// create network controls
+			zb = new OpenLayers.Control.ZoomBox(
+				{title:"Zoom box: Selecting it you can zoom on an area by clicking and dragging."});
+			mouseDefault =new OpenLayers.Control.MouseDefaults(
+	 				{title:'You can use the default mouse configuration'}); 
+			var editPanel = myNetwork.createEditPanel(true);
+			editPanel.addControls([zb,mouseDefault]);
+			editPanel.defaultControl = mouseDefault;
+			map.addControl(editPanel);
+			
+			// create graph for this network
+			myNetwork.graph = new GeometricNet.Graph(myNetwork.edge,myNetwork.node);
+
+			// create flag layer that contain few funtions to display path of the network
+			myNetwork.flag = new GeometricNet.Layer.Vector.Flag(myNetwork.name+'_flag',this.graph);
+			map.addLayer(myNetwork.flag);
+			myNetwork.flag.graph = myNetwork.graph;
+			
+			var flag = new OpenLayers.Control.DrawFeature(myNetwork.flag,OpenLayers.Handler.Point,
+				{title:'Draw a Flag','displayClass': 'olControlDrawFeaturePointFlag'}) ;
+			editPanel.addControls([flag]);
+
+			
+            //describe feature on hover
+			selectEdge = new OpenLayers.Control.SelectFeature([myNetwork.edge,myNetwork.node],{hover:true,onSelect: describeFeature});			
+			map.addControl(selectEdge);
+			selectEdge.activate();
+
+			map.setCenter(new OpenLayers.LonLat(-702335,7043201),15);
+			//console.log("Starting map");			
+        }
+        
+		function describeFeature(feature){			
+			var desc =  {};
+			if (feature instanceof GeometricNet.Feature.Vector.Edge) {
+				desc = { feature_id : feature.fid,
+						 start_node_id: feature.attributes.startNode,
+						 end_node_id: feature.attributes.endNode
+						};
+			} else if (feature instanceof GeometricNet.Feature.Vector.Node){
+				desc = { feature_id : feature.fid };
+				if (feature.attributes.startEdges){
+					var start_edges=[];
+					//console.log("startEdges :" +feature.attributes.startEdges.length);
+					for (var i=0;i<feature.attributes.startEdges.length;i++){
+						start_edges.push(feature.attributes.startEdges[i]);
+					}
+					desc.start_edges = start_edges;
+				}
+				if( feature.attributes.endEdges){
+					var end_edges=[];
+					for (var i=0;i<feature.attributes.endEdges.length;i++){
+						end_edges.push(feature.attributes.endEdges[i]);
+					}
+					desc.end_edges = end_edges;
+				}				
+			}
+			var descString = JSON.stringify(desc);
+			var pices = descString.split(",");			
+			for (var i=0;i < pices.length;i++){
+				pices[i] += ",\n";
+			} 
+			descString = pices.join("");			
+			//console.log(descString);
+			document.getElementById('output').value = descString;
+		}
+    </script>
+  </head>
+ <body onload="init()">
+    <h3 id="title">Find shortest path using Geometric Network <a href="http://sourceforge.net/apps/trac/geometricnet/wiki/WikiStart">(GeometricNet)</a></h3>    
+    <p>
+        Create a road network with correct network topology and find shortest path. Draw flag at start node and end node to display the shortest path.<br>
+        The toptology / rules can be defined in configuration file  <a target="_blank" href="road-network-config.js">road-network-config.js</a> <br>    
+    <table><tr>
+    <td><div id="map" class="smallmap"></div></td>
+    <td><div><textarea id="output" cols="40" rows="24">Move mouse over the feature to see the network properties.</textarea></div></td>
+    </tr></table>    
+    <p>Move mouse over the feature to see the network properties in text box.<br>
+        (Note: Please Open this page in FF or Chrome for better map operations.) </P>  
+  </body>
+</html>

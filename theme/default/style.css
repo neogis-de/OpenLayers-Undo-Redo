@@ -1,0 +1,196 @@
+.olControlPanel  {
+	float:right;
+    right: 0px;
+	height: 29px; 
+	width: 140px;
+	background-color:grey;
+}	
+.olControlPanel div {
+  float:right; 
+  display:block;
+  width:  24px;
+  height: 24px;
+  margin: 5px;
+  background-color:red;
+}
+
+.olControlPanel .olControlMouseDefaultsItemActive { 
+  background-color: blue;
+  background-image: url("img/pan_on.png");
+}
+.olControlPanel .olControlMouseDefaultsItemInactive { 
+  background-color: orange;
+  background-image: url("img/pan_off.png");
+}
+.olControlPanel .olControlDrawFeatureLineItemActive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/draw_line_on.png");
+}
+.olControlPanel .olControlDrawFeatureLineItemInactive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/draw_line_off.png");
+}
+.olControlPanel .olControlDrawFeaturePointItemActive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/draw_point_on.png");
+}
+.olControlPanel .olControlDrawFeaturePointItemInactive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/draw_point_off.png");
+}
+.olControlPanel .olControlZoomBoxItemInactive { 
+  width:  22px;  
+  height: 22px;
+  background-color: orange;
+  background-image: url("img/drag-rectangle-off.png");
+}
+.olControlPanel .olControlZoomBoxItemActive { 
+  width:  22px;  
+  height: 22px;
+  background-color: blue;
+  background-image: url("img/drag-rectangle-on.png");
+}
+.olControlPanel .olControlZoomToMaxExtentItemInactive { 
+  width:  18px;  
+  height: 18px;
+  background-image: url("img/zoom-world-mini.png");
+}
+.olControlPanel .olControlDrawFeaturePointFlagItemActive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/flag_on.png");
+}
+.olControlPanel .olControlDrawFeaturePointFlagItemInactive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/flag_off.png");
+} 
+
+.olControlPanel .olControlDrawFeaturePointSubStationItemActive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/subStation_on.png");
+}
+.olControlPanel .olControlDrawFeaturePointSubStationItemInactive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/subStation_off.png");
+}
+.olControlPanel .olControlDrawFeaturePointHighMastItemActive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/highMast_on.png");
+} 
+.olControlPanel .olControlDrawFeaturePointHighMastItemInactive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/highMast_off.png");
+} 
+.olControlPanel .olControlDrawFeaturePointTransformerItemActive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/transformer_on.png");
+} 
+.olControlPanel .olControlDrawFeaturePointTransformerItemInactive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/transformer_off.png");
+} 
+.olControlPanel .olControlDrawFeaturePointPoleItemActive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/pole_on.png");
+} 
+.olControlPanel .olControlDrawFeaturePointPoleItemInactive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/pole_off.png");
+} 
+.olControlPanel .olControlDrawFeaturePointConnectionPointItemActive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/connectionPoint_on.png");
+} 
+.olControlPanel .olControlDrawFeaturePointConnectionPointItemInactive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/connectionPoint_off.png");  
+} 
+.olControlPanel .olControlDrawFeatureLineHighVoltageItemActive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/highVoltage_on.png");
+} 
+.olControlPanel .olControlDrawFeatureLineHighVoltageItemInactive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/highVoltage_off.png");
+} 
+.olControlPanel .olControlDrawFeatureLineMainLineItemActive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/mainLine_on.png");
+} 
+.olControlPanel .olControlDrawFeatureLineMainLineItemInactive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/mainLine_off.png");
+} 
+.olControlPanel .olControlDrawFeatureLineDistributionLineItemActive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/distributionLine_on.png");
+} 
+.olControlPanel .olControlDrawFeatureLineDistributionLineItemInactive { 
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/distributionLine_off.png");
+}
+.olControlPanel .olControlSaveFeaturesItemInactive {
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/save_features_off.png");	
+}
+.olControlPanel .olControlSaveFeaturesItemActive {
+  width:  22px;  
+  height: 22px;
+  background-image: url("img/save_features_on.png");	
+}
+.olControlPanel .olControlModifyFeatureItemInactive {
+  width: 22px;
+  height: 22px;
+  background-image: url("img/move_node_off.png");
+}
+.olControlPanel .olControlModifyFeatureItemActive {
+  width: 22px;
+  height: 22px;
+  background-image: url("img/move_node_on.png");
+}
+
+.olControlPanel .olControlDeleteNodeItemInactive {
+  width: 22px;
+  height: 22px;
+  background-image: url("img/delete_node_off.png");
+}
+ 
+.olControlPanel .olControlDeleteNodeItemActive {
+  width: 22px;
+  height: 22px;
+  background-image: url("img/delete_node_on.png");
+}
+
+.olControlPanel .olControlDeleteEdgeItemInactive {
+  width: 22px;
+  height: 22px;
+  background-image: url("img/delete_edge_off.png");
+}
+ 
+.olControlPanel .olControlDeleteEdgeItemActive {
+  width: 22px;
+  height: 22px;
+  background-image: url("img/delete_edge_on.png");
+}

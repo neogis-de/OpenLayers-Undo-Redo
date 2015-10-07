@@ -1,0 +1,5 @@
+released under Clear BSD license
+
+adapted from http://sourceforge.net/projects/geometricnet:
+  Copyright 2010 Gagan Bansal, released under the Clear BSD license.
+  

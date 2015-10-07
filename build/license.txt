@@ -1,0 +1,17 @@
+/*
+  GeometricNet --  Geometric Network Createion Library based on OpenLayers
+
+  Copyright 2010 Gagan Bansal, released under the Clear BSD license.
+  Please see http://svn.GeometricNet.org/trunk/GeometricNet/license.txt
+  for the full text of the license.
+
+*/
+
+/* Contains portions of OpenLayers:
+ *
+ * OpenLayers Map Viewer Library
+ *  Copyright 2005-2008 MetaCarta, Inc., released under the Clear BSD license.
+ *  Please see http://svn.openlayers.org/trunk/openlayers/license.txt
+ *  for the full text of the license.
+ *
+ *--------------------------------------------------------------------------*/

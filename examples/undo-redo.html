@@ -1,0 +1,407 @@
+<html>
+  <head>
+    
+  <!-- Adapted from :
+  
+  GeometricNet --  Geometric Network Createion Library based on OpenLayers
+
+  Copyright 2010 Gagan Bansal, released under the Clear BSD license.
+  Please see http://svn.GeometricNet.org/trunk/GeometricNet/license.txt
+  for the full text of the license. -->
+
+
+	
+	<title>Undo Redo OpenLayers Vector Edit</title>
+    <link href='https://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
+	
+	<link rel="stylesheet" href="../theme/default/style.css" type="text/css" />
+    
+    <style type="text/css">
+    	html,body {
+            width: 100%;
+            height: 100%;
+            margin: 0px !important;
+			font-family: 'Arvo', serif;
+        }
+		#map {
+            width: 100%;
+            height: 50%;;
+            border: 1px solid #ccc;
+			margin: auto;
+        }
+        #controls {
+            width: 512px;
+        }
+        #controlToggle {
+            padding-left: 1em;
+        }
+        #controlToggle li {
+            list-style: none;
+        }
+		
+		
+		
+		.olControlPanel {
+    left: 0px !important;
+	bottom: 0px !important;
+	border-radius:0px 5px 0px 0px;
+
+    height: 70px;
+    width:100px;
+    background-color: rgba(255,255,255,0.7) !important;
+	border: 1px solid #7391AD;
+}
+		
+		.olControlPanel div {
+		margin-top: 5px !important;
+          float: left;
+          display: block;
+          position: relative;
+		  background-color: unset !important;
+        }
+		
+	
+         
+		
+		
+		.olControlPanel .button1DisplayItemInactive {
+          display: inline-block;
+  border-radius: 3px;
+		width:  34px;
+          height: 34px;
+		  border: 1px solid #7391AD;
+		      background-position-x: 5px;
+    background-position-y: 5px;
+           background-image: url("../theme/default/img/Undo_24x24.png");
+		       background-repeat: no-repeat;
+        }
+		
+		.olControlPanel .button1DisplayItemActive {
+         border-radius: 3px;
+		width:  34px;
+          height: 34px;
+		  border: 1px solid #7391AD;
+		      background-position-x: 5px;
+    background-position-y: 5px;
+           background-image: url("../theme/default/img/Undo_24x24.png");
+		       background-repeat: no-repeat;
+			   background-color: rgba(200,200,200,0.7) !important;
+			  
+			
+        }
+       
+        .olControlPanel .button2DisplayItemActive {
+         border-radius: 3px;
+		width:  34px;
+          height: 34px;
+		  border: 1px solid #7391AD;
+		      background-position-x: 5px;
+    background-position-y: 5px;
+          background-image: url("../theme/default/img/Redo_24x24.png");
+		      background-repeat: no-repeat;
+			  background-color: rgba(200,200,200,0.7) !important;
+			
+		}
+		
+		.olControlPanel .button2DisplayItemInactive {
+         border-radius: 3px;
+		width:  34px;
+          height: 34px;
+		  border: 1px solid #7391AD;
+		      background-position-x: 5px;
+    background-position-y: 5px;
+          background-image: url("../theme/default/img/Redo_24x24.png");
+		      background-repeat: no-repeat;
+			 
+		}
+		#undoredo_text
+		{
+		margin: 0px !important;
+		padding-top:3px;
+		    width: 100px;
+    text-align: center;
+		}
+		#cccc
+		{
+		margin-top:50px;
+		font-size:10px;
+		bottom: 0px;
+    position: absolute;
+    right: 0px !important;
+		}
+		#logspan
+		{
+		font-weight:bold;}
+		#hwrapper
+		{
+		padding:3px 0px 3px;0px;
+		margin:auto;
+		width:75%;
+text-align:center;	
+	}
+    </style>
+    <!--script src="../lib/Firebug/firebug.js"></script-->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+	<script src="../lib/OpenLayers/OpenLayers.js"></script>
+	<script src="../lib/GeometricNet/UndoRedo_example.js"></script>
+    <script type="text/javascript">
+        var map, vectors, controls, App={};
+		App.alert={};
+		App.alert.undo=0;
+		App.alert.redo=0;
+		function init(){
+            App.logspan=document.getElementById("logspan");
+			map = new OpenLayers.Map('map');
+            /*
+			var wms = new OpenLayers.Layer.WMS( "OpenLayers WMS", 
+                "http://vmap0.tiles.osgeo.org/wms/vmap0?", {layers: 'basic'}); 
+				*/
+			var osm=new OpenLayers.Layer.OSM();
+				
+            OpenLayers.Feature.Vector.style['default']['strokeWidth'] = '2';
+            vectors = new OpenLayers.Layer.Vector("Vector Layer");
+
+            map.addLayers([
+			//wms,
+			osm,vectors]);
+            map.addControl(new OpenLayers.Control.LayerSwitcher());
+            map.addControl(new OpenLayers.Control.MousePosition());
+			
+			
+			var panel = new OpenLayers.Control.Panel(
+			{
+			title: "Undo-Redo-Control"
+			});
+            
+             App.button1 = new OpenLayers.Control.Button({title:'undo',
+                                                         displayClass: "button1Display",
+                                                         trigger: function(){undoRedo.undo()}
+														 }
+														 );
+                                                        
+             App.button2 = new OpenLayers.Control.Button({title:'redo',
+                                                         displayClass: "button2Display",
+                                                         trigger: function(){undoRedo.redo()}
+														 }
+														 );
+             panel.addControls([App.button1,App.button2]);
+             map.addControl(panel);
+			 // button1.activate(); and button1.deactivate(); to switch between different styles
+			
+            
+            function report(event) {
+                OpenLayers.Console.log(event.type, event.feature ? event.feature.id : event.components);
+				return true;
+            }
+            /*vectors.events.on({
+                "beforefeaturemodified": report,
+                "featuremodified": report,
+                "afterfeaturemodified": report,
+                "vertexmodified": report,
+                "sketchmodified": report,
+                "sketchstarted": report,
+                "sketchcomplete": report
+            });*/
+            controls = {
+                point: new OpenLayers.Control.DrawFeature(vectors,
+                            OpenLayers.Handler.Point),
+                line: new OpenLayers.Control.DrawFeature(vectors,
+                            OpenLayers.Handler.Path),
+                polygon: new OpenLayers.Control.DrawFeature(vectors,
+                            OpenLayers.Handler.Polygon),
+                regular: new OpenLayers.Control.DrawFeature(vectors,
+                            OpenLayers.Handler.RegularPolygon,
+                            {handlerOptions: {sides: 5}}),
+                modify: new OpenLayers.Control.ModifyFeature(vectors),
+				"delete": new DeleteFeature(vectors)
+            };
+            
+            for(var key in controls) {
+                map.addControl(controls[key]);
+            }
+            
+            map.setCenter(new OpenLayers.LonLat(0, 0), 3);
+            document.getElementById('noneToggle').checked = true;
+            //register undo redo event 
+			//undoRedo = new UndoRedo(vectors);	
+			undoRedo = new OpenLayers.Control.UndoRedo(vectors);	
+			
+			$(".olControlPanel").prepend($("#undoredo_text"));
+			
+        }
+        
+		function logspan(message)
+		{
+		if(typeof(message)=="string")
+		{
+		App.logspan.innerHTML=message;
+		}
+		else
+		{
+		// objects can not be written to span
+		}
+		
+		}
+		
+        function update() {
+            // reset modification mode
+            controls.modify.mode = OpenLayers.Control.ModifyFeature.RESHAPE;
+            var rotate = document.getElementById("rotate").checked;
+            if(rotate) {
+                controls.modify.mode |= OpenLayers.Control.ModifyFeature.ROTATE;
+            }
+            var resize = document.getElementById("resize").checked;
+            if(resize) {
+                controls.modify.mode |= OpenLayers.Control.ModifyFeature.RESIZE;
+                var keepAspectRatio = document.getElementById("keepAspectRatio").checked;
+                if (keepAspectRatio) {
+                    controls.modify.mode &= ~OpenLayers.Control.ModifyFeature.RESHAPE;
+                }
+            }
+            var drag = document.getElementById("drag").checked;
+            if(drag) {
+                controls.modify.mode |= OpenLayers.Control.ModifyFeature.DRAG;
+            }
+            if (rotate || drag) {
+                controls.modify.mode &= ~OpenLayers.Control.ModifyFeature.RESHAPE;
+            }
+            var sides = parseInt(document.getElementById("sides").value);
+            sides = Math.max(3, isNaN(sides) ? 0 : sides);
+            controls.regular.handler.sides = sides;
+            var irregular =  document.getElementById("irregular").checked;
+            controls.regular.handler.irregular = irregular;
+        }
+
+        function toggleControl(element) {
+            for(key in controls) {
+                var control = controls[key];
+                if(element.value == key && element.checked) {
+                    control.activate();
+                } else {
+                    control.deactivate();
+                }
+            }
+        }
+
+  DeleteFeature = OpenLayers.Class(OpenLayers.Control, {
+    initialize: function(layer, options) {
+        OpenLayers.Control.prototype.initialize.apply(this, [options]);
+        this.layer = layer;
+        this.handler = new OpenLayers.Handler.Feature(
+            this, layer, {click: this.clickFeature}
+        );
+    },
+    clickFeature: function(feature) {
+        // if feature doesn't have a fid, destroy it
+        if(feature.fid == undefined) {
+            this.layer.destroyFeatures([feature]);
+        } else {
+            this.layer.drawFeature(feature,{display: "none"}) ;
+			this.layer.removeFeatures(feature)
+            //feature.state = OpenLayers.State.DELETE;
+            this.layer.events.triggerEvent("afterfeaturemodified", {feature: feature});
+            //feature.renderIntent = "select";
+        }
+    },
+    setMap: function(map) {
+        this.handler.setMap(map);
+        OpenLayers.Control.prototype.setMap.apply(this, arguments);
+    },
+    CLASS_NAME: "OpenLayers.Control.DeleteFeature"
+ })
+
+        
+    </script>
+  </head>
+  <body onload="init()">
+   <div id="hwrapper">
+   <h2 id="title">OpenLayers Undo Redo Vector Edit Example</h2>
+
+    <div id="shortdesc">A demonstration of the UndoRedo control for undo and redo vector feature editing.</div>
+	</div>
+
+    <div id="map" class="smallmap"></div>
+	<div id="undoredo_text">Undo-Redo</div>
+	<div id="undoredo">
+	Log-Messages: <span id="logspan"></span>
+	<!-- <input  type="button" value="Undo" onClick="undoRedo.undo()">
+	<input  type="button" value="Redo" onClick="undoRedo.redo()"> -->
+	<!--input  type="button" value="Undo" onClick="undoRedo.undo()"-->
+	</div>
+    <div id="controls">
+        <ul id="controlToggle">
+            <li>
+                <input type="radio" name="type" value="none" id="noneToggle"
+                       onclick="toggleControl(this);" checked="checked" />
+                <label for="noneToggle">navigate</label>
+            </li>
+            <li>
+
+                <input type="radio" name="type" value="point" id="pointToggle" onclick="toggleControl(this);" />
+                <label for="pointToggle">draw point</label>
+            </li>
+            <li>
+                <input type="radio" name="type" value="line" id="lineToggle" onclick="toggleControl(this);" />
+                <label for="lineToggle">draw line</label>
+            </li>
+            <li>
+                <input type="radio" name="type" value="polygon" id="polygonToggle" onclick="toggleControl(this);" />
+                <label for="polygonToggle">draw polygon</label>
+            </li>
+            <li>
+                <input type="radio" name="type" value="regular" id="regularToggle" onclick="toggleControl(this);" />
+                <label for="regularToggle">draw regular polygon</label>
+                <label for="sides" - sides</label>
+
+                <input id="sides" type="text" size="2" maxlength="2"
+                       name="sides" value="5" onchange="update()" />
+                <ul>
+                    <li>
+                        <input id="irregular" type="checkbox"
+                               name="irregular" onchange="update()" />
+                        <label for="irregular">irregular</label>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <input type="radio" name="type" value="delete" id="deleteToggle" onclick="toggleControl(this);" />
+                <label for="polygonToggle">delete feature</label>
+            </li>
+
+            <li>
+                <input type="radio" name="type" value="modify" id="modifyToggle"
+                       onclick="toggleControl(this);" />
+                <label for="modifyToggle">modify feature</label>
+                <ul>
+                    <li>
+                        <input id="rotate" type="checkbox"
+                               name="rotate" onchange="update()" />
+                        <label for="rotate">allow rotation</label>
+                    </li>
+
+                    <li>
+                        <input id="resize" type="checkbox"
+                               name="resize" onchange="update()" />
+                        <label for="resize">allow resizing</label>
+                        (<input id="keepAspectRatio" type="checkbox"
+                               name="keepAspectRatio" onchange="update()" checked="checked" />
+                        <label for="keepAspectRatio">keep aspect ratio</label>)
+                    </li>
+                    <li>
+                        <input id="drag" type="checkbox"
+                               name="drag" onchange="update()" />
+
+                        <label for="drag">allow dragging</label>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+	<div id="cccc">
+	Adapted from GeometricNet, released under the Clear BSD license.
+  Please see http://svn.GeometricNet.org/trunk/GeometricNet/license.txt
+  for the full text of the license. <br />
+  Undo/Redo Icon from <a href="http://www.visualpharm.com/must_have_icon_set/" target="_blank">http://www.visualpharm.com/must_have_icon_set/</a>
+	</div>
+  </body>
+</html>
